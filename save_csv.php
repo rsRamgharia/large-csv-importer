@@ -11,6 +11,7 @@ class CSV extends Database
 
     public function insert($table, $fields)
     {
+
         $keys = "" . implode(',', array_keys($fields)) . "";
         $values = "'" . implode("','", array_values($fields)) . "'";
         $sql = "INSERT INTO " . $table . " (" . $keys . ") VALUES (" . $values . ")";

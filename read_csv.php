@@ -13,20 +13,11 @@ $table = new Table($table_name); // Create new object for creating table
 
 $lines = explode("\n", $content); // Explode content of CSV file
 
-$headers = explode(',', $lines[0]); // Get Headers of CSV file
+$headers = explode(',', $_POST['headers']); // Get Headers of CSV file
 
 $headers_sql = array();
 foreach ($headers as $header) {
     $headers_sql[] = strtolower(str_replace(' ', '_', $header)); // Remove space add '_' and all strings to be lower character
-}
-
-session_start();
-
-// Check Session and save headers to session if not exist
-
-if (!isset($_SESSION['headers'])) {
-    $_SESSION['headers'] = $headers_sql;
-    echo 'New session created';
 }
 
 $is_table_exist = $table->is_table_exist(); // Check table that created is exist or not
@@ -44,16 +35,14 @@ foreach ($lines as $key => $line) {
 }
 
 // Combine headers and csv rows to create new array
-
 function replace_array_key()
 {
     global $csv_row;
-    if (isset($_SESSION['headers'])) {
-        $headers = $_SESSION['headers'];
-    }
+    global $headers_sql;
+
     $result = array();
     foreach ($csv_row as $array) {
-        $result[] = array_combine($headers, $array);
+        $result[] = array_combine($headers_sql, $array);
     }
 
     return $result;
@@ -66,6 +55,7 @@ function save_csv_data() // Save CSV data to database
     $csv = new CSV;
     global $table_name;
     $records = replace_array_key(); // Get array of CSV files
+
     foreach ($records as $record) {
         $result = $csv->insert($table_name, $record); // Insert records
     }
